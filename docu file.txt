@@ -1,0 +1,78 @@
+1. examples of instance creation with Portfolio class:
+            initial_cash = 100000
+        portfolio = Portfolio(initial_cash)
+
+        # Execute a buy order
+        buy_order = MarketOrder("AAPL", TradingOrder.BUY, 10, 150)
+        portfolio.execute_order(buy_order, market_data)
+
+        # Set a stop-loss order at a 5% loss
+        portfolio.stop_loss_order("AAPL", 0.05)
+
+        # Calculate position sizing for a 1% risk
+        position_size = portfolio.position_sizing("AAPL", 0.01)
+        
+ 2.    Example historical data (use actual historical price data in practice)
+historical_data = {
+    "AAPL": pd.DataFrame({"close": np.random.uniform(100, 200, size=300)})}
+
+
+3. To use the Backtester with the MovingAverageCrossoverStrategy, you would do something like this:
+# Load historical data (in this example, we assume the data is already loaded in a DataFrame called 'data')
+historical_data = data
+
+# Initialize the moving average crossover strategy
+strategy = MovingAverageCrossoverStrategy("AAPL", short_window=50, long_window=200)
+
+# Create the backtester and run the strategy
+backtester = Backtester(historical_data, strategy, initial_cash=100000, risk_percent=0.01)
+backtester.run()
+
+# Evaluate the strategy performance
+backtester.evaluate_performance()
+
+4. The update_position method in the Portfolio class is responsible for updating 
+the portfolio's positions and cash balance when an order is executed.
+
+Here's a brief explanation of the method:
+
+Check if the traded symbol (stock) is already in the portfolio's positions dictionary. If it's not, initialize the symbol's position as 0.
+Update the position of the symbol by adding the executed order's quantity (which could be positive for buying or negative for selling).
+Update the cash balance by subtracting the total cost of the trade, which is calculated as the product of the executed order's quantity and price.
+
+Note: The "positions" in the Portfolio class represents 
+the quantity of each security (symbol) being held in the portfolio
+
+
+User Instructions(README):
+Here's a step-by-step guide on how users can create their own strategy and select stocks:
+
+Instruct users to create a new Python file (e.g., my_strategy.py) to implement their custom strategy. They should import the Strategy base class and other necessary components from your trading simulator.
+'from strategy import Strategy'
+In the my_strategy.py file, users should create a new class that inherits from the Strategy base class and implements the generate_signal method.
+'class MyCustomStrategy(Strategy):
+    def __init__(self, symbol, *args, **kwargs):
+        super().__init__(symbol, *args, **kwargs)
+
+    def generate_signal(self, market_data):
+        # Implement the logic for generating buy and sell signals based on market_data
+        # Return 1 for buy, -1 for sell, and 0 for no action'
+In the main.py file, users should import their custom strategy class:
+'from my_strategy import MyCustomStrategy'
+
+In the main.py file, users should select the stock(s) they want to trade by specifying the stock symbol(s). They can then create an instance of their custom strategy for each stock symbol:
+'symbols = ["AAPL", "GOOG", "TSLA"]  # List of stock symbols to trade
+strategies = [MyCustomStrategy(symbol) for symbol in symbols]'
+
+Finally, the main.py file should initialize the backtester, data feed, and other components with the custom strategy and stock symbol(s):
+'data_feed = AlpacaDataFeed(api_key, secret_key, base_url)
+execution_handler = AlpacaExecutionHandler(api_key, secret_key, base_url)
+
+for strategy in strategies:
+    backtester = Backtester(data_feed, strategy, initial_cash, risk_percent, stop_loss_percent)
+    backtester.run()
+    backtester.evaluate_performance()
+'
+
+These steps above will allow users to create and use their own custom strategy and select the stocks they want to trade using your trading simulator. 
+
